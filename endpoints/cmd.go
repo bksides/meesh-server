@@ -8,8 +8,8 @@ import (
 )
 
 type Cmd struct {
-	Cmd      int   `json:"cmd"`
-	Sequence []int `json:"sequence"`
+	Cmd      int     `json:"cmd"`
+	Sequence [][]int `json:"sequence"`
 }
 
 var cmdQueue = make([]Cmd, 0)
@@ -27,7 +27,10 @@ func GetCmd(c *gin.Context) {
 
 func PostCmd(c *gin.Context) {
 	var cmd Cmd
-	c.BindJSON(&cmd)
+	if c.BindJSON(&cmd) != nil {
+		c.Status(http.StatusBadRequest)
+		return
+	}
 	pushCmd(cmd)
 	c.Status(http.StatusOK)
 	return
